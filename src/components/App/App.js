@@ -11,6 +11,8 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Popup from '../../views/Popup/Popup';
 import Options from '../../views/Options/Options';
+import Login from '../../views/Auth/Login';
+import SignUp from '../../views/Auth/SignUp';
 import { getTheme } from '../../theme';
 import { sGetDarkMode } from '../../store/reducers/settings';
 
@@ -19,6 +21,12 @@ const App = ({ darkMode }) => (
     <CssBaseline>
       <Router>
         <Switch>
+          <Route path='/login'>
+            <Login />
+          </Route>
+          <Route path='/register'>
+            <SignUp />
+          </Route>
           <Route path="/popup">
             <Popup />
           </Route>
