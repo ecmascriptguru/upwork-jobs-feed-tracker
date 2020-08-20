@@ -1,7 +1,7 @@
 import {
   JOBS_ADD,
   JOBS_SET,
-  JOBS_SET_SUGGESTED
+  JOBS_SET_SUGGESTED,
 } from '../reducers/jobs';
 
 export const acJobsAdd = jobs => ({

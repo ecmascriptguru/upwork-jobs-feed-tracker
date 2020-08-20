@@ -16,6 +16,7 @@ import { sGetBadgeText } from '../store/selectors';
 import { badgeColor, jobsAlarmKey } from '../globals';
 import { sGetUnsuggestedJobs } from '../store/reducers/jobs';
 import { acJobsAdd, acJobsSetSuggested } from '../store/actions/jobs';
+import { acKeywordsSet } from '../store/actions/keywords';
 import { sGetFetchingEnabled, sGetFetchingInterval } from '../store/reducers/settings';
 
 const getState = () => store.getState();
@@ -26,13 +27,14 @@ const fetchingInterval = () => sGetFetchingInterval(getState());
 const isFetchingEnabled = () => sGetFetchingEnabled(getState());
 
 const fetchJobs = async () => {
-  const [error, jobs] = await getJobs();
+  const [error, jobs, keywords] = await getJobs();
 
   if (error) {
     store.dispatch(acAuthSet(false));
   } else {
     store.dispatch(acAuthSet(true)); // if previous request failed
     store.dispatch(acJobsAdd(jobs));
+    store.dispatch(acKeywordsSet(keywords))
 
     if (unsuggestedJobs().length > 0) {
       clearNotifications();

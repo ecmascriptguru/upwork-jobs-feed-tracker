@@ -19,7 +19,7 @@ import NoNewJobsText from './NoNewJobsText';
 import UnauthenticatedText from './UnauthenticatedText';
 import styles from './Popup.style';
 
-const defaultWidth = 320;
+const defaultWidth = 640;
 const safeWidth = 22; // includes spacing, etc.
 
 const Popup = ({
@@ -52,16 +52,17 @@ const Popup = ({
         container
         spacing={1}
       >
+        <img
+          className={classes.logoImage}
+          src="/icon.png"
+          alt="upwork-logo"
+        />
         <Grid
           ref={logoRef}
           className={classes.logoContainer}
           item
         >
-          <img
-            className={classes.logoImage}
-            src="/icon.png"
-            alt="upwork-logo"
-          />
+
         </Grid>
         <Grid
           ref={textRef}
