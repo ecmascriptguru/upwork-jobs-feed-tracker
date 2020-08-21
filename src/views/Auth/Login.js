@@ -11,6 +11,7 @@ import {
 import { withStyles } from '@material-ui/core';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import Header from '../../components/Layout/Header/Header';
+import { Route } from "react-router-dom";
 
 const styles = theme => ({
   container: {
@@ -48,7 +49,7 @@ class Login extends Component {
     password: "",
     agreement: ""
   };
-
+  
   handleChange = event => {
     event.persist();
     this.setState({
@@ -80,9 +81,15 @@ class Login extends Component {
                   <Grid item lg={6} md={6} sm={12} xs={12}>
                     <div className="flex flex-wrap items-center mb-4 justify-center ">
                       <div>
-                        <Button className="capitalize" style={{minWidth: "200px", maxWidth: "200px", "font-size": "15px", color: "white"}}>
-                          Sign Up
+                        <Route render={({ history}) => (
+                          <Button 
+                            className="capitalize" 
+                            style={{minWidth: "200px", maxWidth: "200px", "font-size": "15px", color: "white"}}
+                            onClick={() => { history.push('/register') }}
+                            >
+                            Sign Up
                         </Button>
+                        )} />
                       </div>
                     </div>
                   </Grid>

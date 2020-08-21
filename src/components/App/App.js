@@ -14,6 +14,7 @@ import Popup from '../../views/Popup/Popup';
 import Options from '../../views/Options/Options';
 import Login from '../../views/Auth/Login';
 import SignUp from '../../views/Auth/SignUp';
+import Plan from '../../views/Plan/Plan'
 import { getTheme } from '../../theme';
 import { sGetDarkMode } from '../../store/reducers/settings';
 
@@ -26,13 +27,16 @@ const App = ({ darkMode }) => (
             <Login />
           </Route>
           <Route path='/register'>
-            <SignUp />
+            <SignUp/>
           </Route>
           <Route path="/popup">
             <Popup />
           </Route>
           <Route path="/options">
             <Options />
+          </Route>
+          <Route path="/plan">
+            <Plan />
           </Route>
         </Switch>
       </Router>
