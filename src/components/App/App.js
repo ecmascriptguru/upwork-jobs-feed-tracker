@@ -1,4 +1,5 @@
 import React from 'react';
+import "../../assets/styles/_app.scss";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {

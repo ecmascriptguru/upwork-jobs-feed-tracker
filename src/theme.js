@@ -1,17 +1,17 @@
 export const colors = {
-  accentPrimary: '#4CAF50',
+  accentPrimary: '#09DF6B',
   accentPrimaryDark: '#43A047',
   accentPrimaryLight: '#66BB6A',
   accentPrimaryLightest: '#81C784',
 
-  greyDark: '#4e4e4e',
-  greyLight: '#575757',
+  greyDark: '#999999',
+  greyLight: '#aaaaaa',
   greyLighter: '#dedede',
 
   white: '#fff',
   whiteDarker: '#cecece',
 
-  backgroundDark: '#303030',
+  backgroundDark: '#000000',
   backgroundLight: '#e2e2e2'
 };
 
