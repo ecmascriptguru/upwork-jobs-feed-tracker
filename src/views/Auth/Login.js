@@ -11,7 +11,9 @@ import {
 import { withStyles } from '@material-ui/core';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import Header from '../../components/Layout/Header/Header';
-import { Route } from "react-router-dom";
+import { Route, withRouter } from "react-router-dom";
+import { loginWithEmailAndPassword } from "../../store/actions/LoginAction";
+import { connect } from "react-redux";
 
 const styles = theme => ({
   container: {
@@ -47,7 +49,6 @@ class Login extends Component {
   state = {
     email: "",
     password: "",
-    agreement: ""
   };
   
   handleChange = event => {
@@ -58,6 +59,7 @@ class Login extends Component {
   };
 
   handleFormSubmit = event => {
+    this.props.loginWithEmailAndPassword({ ...this.state });
   }
 
   render() {
@@ -81,15 +83,13 @@ class Login extends Component {
                   <Grid item lg={6} md={6} sm={12} xs={12}>
                     <div className="flex flex-wrap items-center mb-4 justify-center ">
                       <div>
-                        <Route render={({ history}) => (
                           <Button 
                             className="capitalize" 
                             style={{minWidth: "200px", maxWidth: "200px", "font-size": "15px", color: "white"}}
-                            onClick={() => { history.push('/register') }}
+                            onClick={() => { this.props.history.push('/register') }}
                             >
                             Sign Up
                         </Button>
-                        )} />
                       </div>
                     </div>
                   </Grid>
@@ -186,4 +186,9 @@ class Login extends Component {
   }
 } 
 
-export default withStyles(styles)(Login);
+const mapStateToProps = state => ({
+  loginWithEmailAndPassword: PropTypes.func.isRequired,
+  login: state.login
+});
+
+export default withStyles(styles)(withRouter(connect(mapStateToProps, { loginWithEmailAndPassword })(Login)));

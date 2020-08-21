@@ -4,6 +4,7 @@ import settings from './settings';
 import jobs from './jobs';
 import keywords from './keywords';
 import plans from './plans';
+import LoginReducer from './LoginReducer';
 
 const rootReducer = combineReducers({
   auth,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   jobs,
   keywords,
   plans,
+  LoginReducer,
 });
 
 export default rootReducer;
