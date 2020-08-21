@@ -15,6 +15,7 @@ import Options from '../../views/Options/Options';
 import Login from '../../views/Auth/Login';
 import SignUp from '../../views/Auth/SignUp';
 import Plan from '../../views/Plan/Plan'
+import Find from '../../views/Find/Find';
 import { getTheme } from '../../theme';
 import { sGetDarkMode } from '../../store/reducers/settings';
 
@@ -37,6 +38,9 @@ const App = ({ darkMode }) => (
           </Route>
           <Route path="/plan">
             <Plan />
+          </Route>
+          <Route path="/find">
+            <Find/>
           </Route>
         </Switch>
       </Router>
