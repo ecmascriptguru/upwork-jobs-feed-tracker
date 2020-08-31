@@ -5,7 +5,7 @@ import Emoji from '../../components/Emoji/Emoji';
 const NoNewJobsText = () => (
   <>
     <div style={{ margin: '0 0 5px' }}>
-      No new jobs so far
+      You can check new jobs from here.
       <br />
       You are good
       <Emoji
@@ -16,7 +16,7 @@ const NoNewJobsText = () => (
     <Link
       target="_blank"
       color="primary"
-      href="/index.html#options"
+      href="/index.html#find"
     >
       View all jobs
     </Link>

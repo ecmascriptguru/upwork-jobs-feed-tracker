@@ -25,7 +25,13 @@ const JobsList = ({ jobs, classes }) => (
 );
 
 const mapStateToProps = state => ({
-  jobs: sGetJobs(state)
+  jobs: sGetJobs(state) ? sGetJobs(state).filter(job => {
+          const keyword = state.user.user.default_keyword;
+            if (job.keyword === keyword) {
+              return true
+            }
+        return false
+      }) : null,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(JobsList));

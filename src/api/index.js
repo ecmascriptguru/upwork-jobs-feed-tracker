@@ -1,11 +1,20 @@
 import axios from 'axios';
+import apiCallService from './apiCallService';
+import { connect } from "react-redux";
+import XMLParser from 'react-xml-parser';
 
+const getKeywords = async () => {
+  let result = await apiCallService.CallAPIWithToken('/api/keywords', 'get', {});
 
-const getKeywords = () => {
-  const url = 'http://localhost:8000/api/keywords';
-  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYzk1OGUyYjZmMTViZTU4YmQyZTMyY2FjZDBhZDM0ZTZjZmEzNjBkZmY4NTQ0NGYwMWIwYzFmOTJlYzVkNjQ2NTNjZTIzMmMyZWRlODQ1OGYiLCJpYXQiOjE1OTc5MTU0OTMsIm5iZiI6MTU5NzkxNTQ5MywiZXhwIjoxNjI5NDUxNDkzLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.U7Md3JSgDgG-LuROyoh-dsH39b96tl8LMBUzTyZRCiThWbUFyyPn9bsVidNrVqv_DGvOAB7-ui0oj7I92R-Q0D-x2YU5DEhRfgcZ1dFgVJT0z_8ZO-NXOOnW1r0zzTBMzbBL1uD6bI6pT6j5T7z75ifBMT3_SOkWEhNwvOJOQ7ioBlxiPfpUWE89V4Ac5mT85WnxstL2xpXk9Fi4V_bHx_jG5-wXY5Wo-BbySga130UEdQzXTZq5ZNU2TSE9YjE31_HWFkUCDGMLlSYyjWH1tb9u9Je9W9ZEMAg1y0IfZKTzivRbRYzJ8T25Hfz9bOiqZHiuxXpTDjsnbOySRCg7sJAiaQXI8buMZ5LtXh3BjWVB8gr9zmfysomzSd7_L3z4vOayAfba1wT3e3C8xeBHJxvf0nTQ6p2h3zpxflMZBMdCGzPRdPmHTAZB_EukqkHgR5-YyLzLuT4Gqhy5fUWEgFdM1WedKXLQclj_4wVFPqLHGDouDJJzWZSbOmQxsiZ3AXXcBCOq8Q3PB4B8UVjsyrl4x7fWCg_HaHeIv2JBT4niSSEwfEqaAAkslVw5O-xt5B50u9AMCZWtTT-WCyOdwe-db9vDOeBaxw5Z64xzMEgMvntbMjC6OMFVfDXOOQAr9KYwaWkmnqVwTzNXA2ND8QQK9mhEWWX-Y_sZIFExzGU"
+  if(result.status == '200') {
+    return result.data.keywords;
+  }
+  /*
+  const url = 'http://192.168.0.115:8000/api/keywords';
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMzI3MmVjY2RiMjRkZGE3NmE1MmU2NzQxZWJhNDRjNjFlZWM1NzM3Njc3YTIxNzI5ZjAxY2RiOGI4YWNlMDQ1MDIwNjcyNTFiZTE3ZGRiYjIiLCJpYXQiOjE1OTgwMjg3MTgsIm5iZiI6MTU5ODAyODcxOCwiZXhwIjoxNjI5NTY0NzE4LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.S9b0m8bs372GYbPxsz_5n5Zb3J0hcjOahsYuJMuuLus13PXvyh0aWI6dxOnQkSj_zoXH9RYwp3iT-Le5yUAyfR5unXN-0Kw3zWco4dzXuG5pLeAuEancZzXnE0PCZH_HAZ7cOWRVZzKtpeU_NiWgu1UgOAexLhcvUl2vWv5ExoDtdAP_kZVzfnKGpLccHCntNqcyRJVkiqHR_J6mq6PjGCpm1Dhj6eKThr89ILuqMfAoZfs5tiLA-KkTC3mvUYyB5t3C_-iKJ74b2Xg3d26rOl0fX7_mWpTyK3tbULJny7rf1sbExz8A3jyRSjt0wha6jyGokGMSyte4dseUYtZJHGZEiy8zDg8YCObQk3LGlu-reGR8kv-YQe8wB1j9npTiPyPPjof1KHV86Cf2iVLHNb3qDl76r5WlIarVs8QB7EN5P-2HQyls0PYHtWprzIC0lr3sIlzHmsnU4_NUVl94Em7tmGErqMdz1q-5hZ9z0sw2p8vd4qWEoOY1XwYZntNIH4wWuOGbHfmfZE5kTPZbDANIY-Tgx3jNPLKvoWJn1KFqLEUcdBAGj70DcaxPgz2Xu9CojunbY4dkLT8JGjlpEBFkf77lQE_2bQAr7DSXzWfZrYhg6PQzqvpFAkiRIrZP_GHzGCxKJE4l5DA8m_G_Pb7M8Bve2kAiND3cNuzqbSs"
   return axios.get(url, {headers: {Authorization: `Bearer ${token}`}})
   .then(response => {return response.data.map(item=>item.keyword)})
+  */
 }
 
 export const keepAuthenticated = () =>
@@ -15,9 +24,38 @@ export const keepAuthenticated = () =>
     .catch(error => [error, null]);
 
 export const getJobs = async () => {
-  await keepAuthenticated();
-  const keywords = await getKeywords()
+//  await keepAuthenticated();
+  let keywords = await getKeywords();
+  let filtered = [];
+  let keywordList = [];
+//  let keywords = ["wordpress", "javascript", "php"];
+  for (let i = 0; i < keywords.length; i++) {
+    const url = keywords[i].rss;
+    keywordList.push(keywords[i].keyword);
+    await axios.get(
+        url,
+        { headers: { 'X-Requested-With': 'XMLHttpRequest' } }
+      )
+      .then(response => {
+        const original = response.data;
+        var parser = require('fast-xml-parser');
+        var xmlJobList = parser.parse(original, {});
 
+        xmlJobList.rss.channel.item.map(item => {
+          filtered.push({
+            'title': item.title.replace(" - Upwork", ""),
+            'link': item.link,
+            'description': item.description,
+            'uid': item.guid,
+            'keyword': keywords[i].keyword, 
+          });
+        });
+      })
+      .catch(error => [error.response, null]);
+  }
+  
+  return [null, filtered, keywordList]
+  /*
   const url = 'https://www.upwork.com/ab/find-work/api/feeds/search'
   return axios
     .get(
@@ -28,7 +66,7 @@ export const getJobs = async () => {
       const original = response.data.results;
       const filtered = original.filter(job => {
         for (let i = 0; i < keywords.length; i ++) {
-          const keyword = keywords[i].toLowerCase();
+          const keyword = keywords[i].keyword.toLowerCase();
           for (let j = 0; j < job.attrs.length; j ++) {
             const skill = job.attrs[j].prettyName.toLowerCase()
             if (skill.indexOf(keyword) > -1) {
@@ -38,8 +76,8 @@ export const getJobs = async () => {
         }
         return false
       })
-      
       return [null, filtered, keywords]
     })
     .catch(error => [error.response, null]);
+    */
 };

@@ -5,6 +5,7 @@ import thunk from "redux-thunk";
 
 const initialState = {};
 const middlewares = [thunk];
+
 let devtools = x => x;
 
 if (

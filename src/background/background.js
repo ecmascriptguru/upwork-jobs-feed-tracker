@@ -7,15 +7,17 @@ import {
   onNotificationClick
 } from '../utils/chrome';
 import store from '../store';
+import apiCallService from '../api/apiCallService';
 import { getJobs } from '../api';
 import { showNotification } from './utils';
-import { openOptionsPage } from '../utils';
+import { openFindPage } from '../utils';
 import { acAuthSet } from '../store/actions/auth';
 import { sGetAuth } from '../store/reducers/auth';
 import { sGetBadgeText } from '../store/selectors';
 import { badgeColor, jobsAlarmKey } from '../globals';
-import { sGetUnsuggestedJobs } from '../store/reducers/jobs';
-import { acJobsAdd, acJobsSetSuggested } from '../store/actions/jobs';
+import { sGetUnsuggestedJobs, sGetJobs, sGetFullJobs } from '../store/reducers/jobs';
+import { acJobsSet, acJobsAdd, acJobsSetSuggested } from '../store/actions/jobs';
+import { setCurrentJobList } from '../store/actions/UserAction';
 import { acKeywordsSet } from '../store/actions/keywords';
 import { sGetFetchingEnabled, sGetFetchingInterval } from '../store/reducers/settings';
 
@@ -27,28 +29,46 @@ const fetchingInterval = () => sGetFetchingInterval(getState());
 const isFetchingEnabled = () => sGetFetchingEnabled(getState());
 
 const fetchJobs = async () => {
-  const [error, jobs, keywords] = await getJobs();
+  console.log("fetching Jobs");
+  let newCount = 0;
+  if(apiCallService.getUser()) {
+    const [error, jobs, keywords] = await getJobs();
+    const prevJobs = sGetFullJobs(getState());
+    const prevJobsIds = prevJobs.map(job => job.uid + job.keyword);
+    const alreadyExists = job => prevJobsIds.includes(job.uid + job.keyword);
+    const newAddedJobs = () => jobs.filter(job => !alreadyExists(job));
+    newCount = newAddedJobs().length;
 
-  if (error) {
-    store.dispatch(acAuthSet(false));
-  } else {
-    store.dispatch(acAuthSet(true)); // if previous request failed
-    store.dispatch(acJobsAdd(jobs));
-    store.dispatch(acKeywordsSet(keywords))
+    if (error) {
+      store.dispatch(acAuthSet(false));
+    } else {
+      store.dispatch(acAuthSet(true)); // if previous request failed
+      store.dispatch(acKeywordsSet(keywords));
+      store.dispatch(acJobsAdd(jobs));
+      
+      console.log(jobs);
+      await apiCallService.setJob(sGetJobs(getState()));
+      let newJobs = await apiCallService.getJob();
+      console.log(keywords);
+      if(jobs.length) {
+  //      await store.dispatch(acJobsSet(newJobs));
+        await store.dispatch(setCurrentJobList(newJobs));
+      }
 
-    if (unsuggestedJobs().length > 0) {
-      clearNotifications();
-      showNotification(getState());
-      store.dispatch(acJobsSetSuggested());
+      if (newAddedJobs().length > 0) {
+        clearNotifications();
+        showNotification(getState(), newAddedJobs());
+        store.dispatch(acJobsSetSuggested());
+      }
     }
   }
 
-  setBadgeText(sGetBadgeText(getState()));
+  setBadgeText(sGetBadgeText(getState()), newCount);
 };
 
 const initialize = () => {
   setBadgeColor(badgeColor);
-  setBadgeText(sGetBadgeText(getState()));
+  setBadgeText(sGetBadgeText(getState()), 0);
 
   if (
     isAuthenticated() &&
@@ -58,10 +78,11 @@ const initialize = () => {
     fetchJobs();
   }
 
+  console.log("background working");
   onAlarm(jobsAlarmKey, fetchJobs);
 
   onNotificationClick(() => {
-    openOptionsPage();
+    openFindPage();
     clearNotifications();
   });
 };

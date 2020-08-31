@@ -19,10 +19,10 @@ export const onAlarm = (key, callback) =>
       : undefined
   );
 
-export const setBadgeText = text =>
+export const setBadgeText = (text, newCount) =>
   chrome.browserAction.setBadgeText({
-    text: text
-      ? `${text}`
+    text: newCount
+      ? `${newCount}`
       : ''
   });
 
@@ -44,7 +44,7 @@ export const createNotification = ({ title, message, contextMessage }) =>
     uuid(),
     {
       type: 'basic',
-      iconUrl: './icon.png',
+      iconUrl: './ico.png',
       title,
       message,
       contextMessage

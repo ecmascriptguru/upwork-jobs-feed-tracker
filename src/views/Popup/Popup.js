@@ -9,102 +9,138 @@ import { connect } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
 import { withStyles } from '@material-ui/core';
 
 import { sGetAuth } from '../../store/reducers/auth';
 import { sGetUnseenJobs } from '../../store/reducers/jobs';
 
+import apiCallService from "../../api/apiCallService";
+
 import NewJobsText from './NewJobsText';
 import NoNewJobsText from './NoNewJobsText';
 import UnauthenticatedText from './UnauthenticatedText';
+
+import Login from '../Auth/Login';
+import SignUp from '../Auth/SignUp';
+import Plan from '../Plan/Plan';
+import Find from '../Find/Find';
+import Options from '../Options/Options';
 import styles from './Popup.style';
 
-const defaultWidth = 640;
-const safeWidth = 22; // includes spacing, etc.
+const defaultWidth = 600;
+const safeWidth = 10; // includes spacing, etc.
 
-const Popup = ({
-  classes,
-  isAuthenticated,
-  unseenJobs
-}) => {
-  const [containerWidth, setContainerWidth] = useState(defaultWidth);
+class Popup extends React.Component {
+  state = {
+    containerWidth: defaultWidth,
+    authUser: null,
+    location: null,
+  }
 
-  const textRef = createRef();
-  const logoRef = createRef();
+  constructor(props) {
+    super(props);
+    this.StorageUpdated = this.StorageUpdated.bind(this);
+  }
 
-  useEffect(() => {
-    setContainerWidth(
-      textRef.current.offsetWidth +
-      logoRef.current.offsetWidth +
-      safeWidth
-    );
-  }, [
-    isAuthenticated,
-    unseenJobs
-  ]);
+  componentDidMount() {
+    this.setState({
+      authUser: apiCallService.getUser(),
+      location: apiCallService.getLocation(),
+    });
 
-  return (
-    <Paper
-      className={classes.container}
-      style={{ width: containerWidth }}
-    >
-      <Grid
-        container
-        spacing={1}
+    if (typeof window !== 'undefined') {
+        window.addEventListener('storage', this.StorageUpdated)
+        console.log("bbb");
+    }
+  }
+
+  componentWillUnmount(){
+      if (typeof window !== 'undefined') {
+          window.removeEventListener('storage', this.StorageUpdated)
+      }
+  }
+
+  StorageUpdated = async () => {
+    console.log("ccc");
+    let location = await apiCallService.getLocation();
+    let authUser = await apiCallService.getUser();
+    this.setState({
+      location: location,
+      authUser: authUser,
+    });
+  }
+
+  changeLocation = (location) => {
+    this.setState({
+      location: location,
+    });
+    console.log("location: " + location);
+  }
+
+  render() {
+    return (
+      <Card
+        className={this.props.classes.container}
+        style={{ width: this.state.containerWidth, background: "black" }}
       >
-        <img
-          className={classes.logoImage}
-          src="/icon.png"
-          alt="upwork-logo"
-        />
         <Grid
-          ref={logoRef}
-          className={classes.logoContainer}
-          item
+          container
+          spacing={1}
         >
-
-        </Grid>
-        <Grid
-          ref={textRef}
-          className={classes.textContainer}
-          item
-        >
-          <Box
-            fontWeight={700}
-            fontSize={15}
-            color="textSecondary"
-            className={classes.typography}
+          <Grid
+            className={this.props.classes.textContainer}
+            item
           >
-            {
-              isAuthenticated &&
-              unseenJobs.length > 0 &&
-              <NewJobsText jobs={unseenJobs} />
-            }
-            {
-              isAuthenticated &&
-              unseenJobs.length === 0 &&
-              <NoNewJobsText />
-            }
-            {
-              !isAuthenticated &&
-              <UnauthenticatedText />
-            }
-          </Box>
+            <Box
+              fontWeight={700}
+              fontSize={15}
+              color="textSecondary"
+              className={this.props.classes.typography}
+            >
+              {
+                this.state.authUser !== null &&
+                this.state.location === 'plan' &&
+                <Plan changeLocation={this.changeLocation}/>
+              }
+              {
+                this.state.authUser !== null &&
+                this.state.location === 'find' &&
+                <Find changeLocation={this.changeLocation}/>
+              }
+              {
+                this.state.authUser !== null &&
+                this.state.location === 'options' &&
+                <Options changeLocation={this.changeLocation}/>
+              }
+              {
+//                this.state.authUser === null &&
+                this.state.location === null &&
+                <Login changeLocation={this.changeLocation}/>
+              }
+              {
+                this.state.authUser === null &&
+                this.state.location === 'signup' &&
+                <SignUp changeLocation={this.changeLocation}/>
+              }
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </Paper>
-  );
+      </Card>
+    );
+  }
 };
 
 Popup.propTypes = {
   classes: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
-  unseenJobs: PropTypes.array.isRequired
+  unseenJobs: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
   isAuthenticated: sGetAuth(state),
-  unseenJobs: sGetUnseenJobs(state)
+  unseenJobs: sGetUnseenJobs(state),
+  total: state,
 });
 
 export default connect(

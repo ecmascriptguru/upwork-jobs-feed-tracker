@@ -1,7 +1,7 @@
 const styles = {
   container: {
     borderRadius: 0,
-    padding: '12px 12px 14px 15px'
+    padding: '0px 0px 10px 0px'
   },
   logoContainer: {
     display: 'flex',

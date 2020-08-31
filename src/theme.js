@@ -1,7 +1,7 @@
 export const colors = {
   accentPrimary: '#09DF6B',
   accentPrimaryDark: '#43A047',
-  accentPrimaryLight: '#66BB6A',
+  accentPrimaryLight: '#183022',
   accentPrimaryLightest: '#81C784',
 
   greyDark: '#999999',
@@ -20,7 +20,8 @@ export const palette = {
     main: colors.accentPrimary,
   },
   secondary: {
-    main: colors.accentPrimaryLight
+    main: colors.accentPrimaryLight,
+    contrastText: colors.accentPrimary,
   },
 };
 

@@ -12,6 +12,8 @@ import { withStyles } from '@material-ui/core';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import Header from '../../components/Layout/Header/Header';
 import { Route } from "react-router-dom";
+import apiCallService from "../../api/apiCallService";
+import history from "../../history.js";
 
 const styles = theme => ({
   container: {
@@ -25,12 +27,12 @@ const styles = theme => ({
   },
 
   cssLabel: {
-    color : 'green'
+    color : '#999999'
   },
 
   cssOutlinedInput: {
     '&$cssFocused $notchedOutline': {
-      borderColor: `${theme.palette.primary.main} !important`,
+      borderColor: `#999999 !important`,
     }
   },
 
@@ -38,7 +40,7 @@ const styles = theme => ({
 
   notchedOutline: {
     borderWidth: '1px',
-    borderColor: 'green !important'
+    borderColor: '#999999 !important'
   },
 
 });
@@ -50,7 +52,30 @@ class SignUp extends Component {
     passwordConfirm: "",
     agreement: ""
   };
-  
+    
+  componentDidMount() {
+    // custom rule will have name 'isPasswordMatch'
+    ValidatorForm.addValidationRule("isPasswordMatch", value => {
+      if (value !== this.state.password) {
+        return false;
+      }
+      return true;
+    });
+
+    ValidatorForm.addValidationRule("lengthLimit", value => {
+      if (value.length < 6) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  componentWillUnmount() {
+    // remove rule when it is not needed
+    ValidatorForm.removeValidationRule("isPasswordMatch");
+    ValidatorForm.removeValidationRule("lengthLimit");
+  }
+
   handleChange = event => {
     event.persist();
     this.setState({
@@ -58,7 +83,13 @@ class SignUp extends Component {
     });
   };
 
-  handleFormSubmit = event => {
+  handleFormSubmit = async (event) => {
+    let result = await apiCallService.register(this.state.email, this.state.password, this.state.passwordConfirm);
+
+    if(result.status == '200') {
+      this.props.changeLocation(null);
+      apiCallService.setLocation(null);
+    } 
   }
 
   render() {
@@ -66,27 +97,28 @@ class SignUp extends Component {
     
     return (
       <div className="flex justify-center w-full h-full-screen" style={{background: "black"}}>
-        <div className="p-12">
-          <ValidatorForm ref="form" onSubmit={this.handleFormSubmit} style={{minWidth: "400px", maxWidth: "500px"}}>
+        <div style={{height: "85px", width: "650px", position:"absolute", background: "#282828"}}></div>
+        <div className="p-8">
+          <ValidatorForm ref="form" onSubmit={this.handleFormSubmit} style={{minWidth: "350px", maxWidth: "650px"}}>
             <Grid container spacing={2}>
               <Grid item lg={12} md={12} sm={12} xs={12}>
-                <Grid container spacing={8}>
-                  <Grid item lg={6} md={6} sm={12} xs={12}>
-                    <div className="flex flex-wrap items-center mb-4 justify-center">
+                <Grid container spacing={2}>
+                  <Grid item lg={6} md={6} sm={6} xs={12}>
+                    <div className="flex flex-wrap items-center mb-4 justify-center" style={{float: "left"}}>
                       <div className="flex">
-                        <Typography variant="h5"><b style={{color: 'green'}}>Work</b></Typography>
+                        <Typography variant="h5"><b style={{color: '#09DF6B'}}>Work</b></Typography>
                         <Typography variant="h5"><b style={{color: 'white'}}>Alert</b></Typography>
                       </div>
                     </div>
                   </Grid>
-                  <Grid item lg={6} md={6} sm={12} xs={12}>
-                    <div className="flex flex-wrap items-center mb-4 justify-center ">
+                  <Grid item lg={6} md={6} sm={6} xs={12}>
+                    <div className="flex flex-wrap items-center mb-4 justify-center" style={{float: "right"}}>
                       <div>
                         <Route render={({ history}) => (
                           <Button 
                             className="capitalize" 
-                            style={{minWidth: "200px", maxWidth: "200px", "font-size": "15px", color: "white"}}
-                            onClick={() => { history.push('/login') }}
+                            style={{"font-size": "15px", color: "#09DF6B"}}
+                            onClick={() => { this.props.changeLocation(null); apiCallService.setLocation(null); }}
                             >
                             Login
                         </Button>
@@ -99,7 +131,7 @@ class SignUp extends Component {
               <Grid item lg={12} md={12} sm={12} xs={12}>
                   <div className="flex flex-wrap items-center mb-4 justify-center ">
                     <div style={{color: 'white'}}>
-                      <Typography variant="h6">Login</Typography>
+                      <Typography variant="h6">SignUp</Typography>
                     </div>
                   </div>
               </Grid>
@@ -140,8 +172,8 @@ class SignUp extends Component {
                       name="password"
                       type="password"
                       value={this.state.password}
-                      validators={["required"]}
-                      errorMessages={["this field is required"]}
+                      validators={["required", "lengthLimit"]}
+                      errorMessages={["this field is required", "Password should be at least 6 letters"]}
                       InputLabelProps={{
                         classes: {
                           root: classes.cssLabel,
@@ -162,10 +194,10 @@ class SignUp extends Component {
                       variant="outlined"
                       onChange={this.handleChange}
                       name="passwordConfirm"
-                      type="passwordConfirm"
+                      type="password"
                       value={this.state.passwordConfirm}
-                      validators={["required"]}
-                      errorMessages={["this field is required"]}
+                      validators={["required", "isPasswordMatch"]}
+                      errorMessages={["this field is required", "Password mismatch"]}
                       InputLabelProps={{
                         classes: {
                           root: classes.cssLabel,

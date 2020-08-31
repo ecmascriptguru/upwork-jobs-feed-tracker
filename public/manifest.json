@@ -1,15 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "Upwork jobs feed tracker",
-  "description": "Freelancer on upwork? Meet Upwork jobs feed tracker. Whenever new job appears in your feed you will get an instant notification!",
-  "version": "2.0.0",
+  "name": "Work Alert",
+  "description": "Work Alert makes finding Upwork jobs easier. Don't spend hours searching, get notifications when jobs are posted.",
+  "version": "1.0.0",
   "icons": {
-    "16": "icon.png",
-    "48": "icon.png",
-    "128": "icon.png"
+    "16": "ico.png",
+    "48": "ico.png",
+    "128": "ico.png"
   },
   "browser_action": {
-    "default_icon": "icon.png",
+    "default_icon": "ico.png",
     "default_popup": "index.html#popup"
   },
   "options_page": "index.html#popup",

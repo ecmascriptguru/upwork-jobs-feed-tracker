@@ -11,7 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import LocationIcon from '@material-ui/icons/LocationOn';
 import VerifiedIcon from '@material-ui/icons/CheckCircle';
 import UnverifiedIcon from '@material-ui/icons/CheckCircleOutline';
-
+import { Card } from '@material-ui/core';
+import ReactHtmlParser from 'react-html-parser'; 
 import {
   getCountry,
   getJobType,
@@ -28,14 +29,18 @@ const Job = ({ job, classes }) => {
   const [fullMode, setFullMode] = useState(false);
 
   return (
-    <div className={classes.container}>
+    <Card className="p-sm-24" elevation={6} style={{background: "#222222"}}>
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href={`https://www.upwork.com/jobs/_${job.ciphertext}`}
-      >
-        <h2>{job.title}</h2>
+        href={job.link}
+      > 
+        <div
+          dangerouslySetInnerHTML={{
+            __html: "<h2>" + job.title.replace("&amp;", "&") + "</h2>"
+          }}></div>
       </a>
+      {/*
       <Typography
         component="p"
         color="textSecondary"
@@ -50,9 +55,9 @@ const Job = ({ job, classes }) => {
         - Est. time: {job.durationLabel} - {job.engagement}<br />
         Posted {moment(job.createdOn).fromNow()}
       </Typography>
+      */}
       <Typography
         component="p"
-        color="textPrimary"
         className={classes.description}
       >
         {job.description.length <= maxDescriptionCharacters &&
@@ -60,17 +65,31 @@ const Job = ({ job, classes }) => {
             .description
             .split('\n')
             .map((item, key) =>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={job.link}
+              > 
               <span key={`job-description-${job.id}-${key}`}>
                 {item}<br/>
               </span>
+              </a>
             )
         }
         {job.description.length > maxDescriptionCharacters && (
           <>
             {!fullMode && (
               <>
-                {job.description.substr(0, maxDescriptionCharacters)}
-                ...
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={job.link}
+                > 
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: job.description.substr(0, maxDescriptionCharacters).replace('a href', 'a color="primary" href') + '...'
+                  }}></div>
+                  </a>
                 <Link
                   color="primary"
                   onClick={() => setFullMode(true)}
@@ -80,19 +99,22 @@ const Job = ({ job, classes }) => {
               </>
             )}
             {fullMode &&
-              job
-                .description
-                .split('\n')
-                .map((item, key) =>
-                  <span key={`job-description-${job.id}-${key}`}>
-                    {item}<br/>
-                  </span>
-                )
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={job.link}
+              > 
+              <div
+                  dangerouslySetInnerHTML={{
+                    __html: job.description.replace('a href', 'a color="primary" href')
+                  }}></div>
+              </a>
             }
           </>
           )
         }
       </Typography>
+      {/*
       <div className={classes.skills}>
         {job.attrs &&
           job.attrs.length &&
@@ -143,8 +165,8 @@ const Job = ({ job, classes }) => {
           </div>
         </div>
       </div>
-
-    </div>
+      */}
+    </Card>
   );
 };
 

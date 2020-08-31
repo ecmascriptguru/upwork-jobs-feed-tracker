@@ -12,14 +12,23 @@ export function loginWithEmailAndPassword({ email, password }) {
             type: LOGIN_LOADING
         });
 
-        console.log(apiCallService);
         apiCallService.loginWithEmailAndPassword(email, password)
         .then(user=> {
             dispatch(setUserData(user));
-            history.push({
-                pathname: "/plan"
-            });
-
+            if(user.current_plan) {
+                // history.push({
+                //     pathname: "/index.html#/find"
+                // });
+                apiCallService.setLocation("find");
+            }
+            else {
+                // history.push({
+                //     pathname: "/index.html#/plan"
+                // });
+                apiCallService.setLocation("plan");
+            }
+            
+            window.location.reload();
             return dispatch({
                 type: LOGIN_SUCCESS
             });

@@ -1,5 +1,5 @@
 const defaultStore = [];
-const maxJobsToStore = 10;
+const maxJobsToStore = 150;
 const suggestedKey = '__suggested';
 const seenKey = '__seen';
 
@@ -11,13 +11,13 @@ const mergeJobs = ({
   oldJobs,
   newJobs
 }) => {
-  const oldJobsIds = oldJobs.map(job => job.uid);
-  const alreadyExists = job => oldJobsIds.includes(job.uid);
+  const oldJobsIds = oldJobs.map(job => job.uid + job.keyword);
+  const alreadyExists = job => oldJobsIds.includes(job.uid + job.keyword);
   const jobsToAdd = newJobs.filter(job => !alreadyExists(job));
 
   return [
-    ...oldJobs,
-    ...jobsToAdd
+    ...jobsToAdd,
+    ...oldJobs
   ];
 };
 
@@ -26,27 +26,31 @@ const markAsSuggested = job => ({
   [suggestedKey]: true
 });
 
-export default (state = defaultStore, action) => {
+const jobs = function(state = defaultStore, action)  {
   switch (action.type) {
     case JOBS_ADD:
       return mergeJobs({
         oldJobs: state,
         newJobs: action.payload
-      })
-        .slice(0, maxJobsToStore);
+      }).slice(0, maxJobsToStore);
     case JOBS_SET_SUGGESTED:
       return state.map(markAsSuggested);
     case JOBS_SET:
+      console.log("changed status: " + JSON.stringify(state));
       return action.payload;
     default:
       return state;
   }
 };
 
-export const sGetJobs = state => state.jobs;
+export const sGetJobs = state => state.jobs.slice(0, 30);
+
+export const sGetFullJobs = state => state.jobs;
 
 export const sGetUnsuggestedJobs = state =>
   sGetJobs(state).filter(job => !job[suggestedKey]);
 
 export const sGetUnseenJobs = state =>
   sGetJobs(state).filter(job => !job[seenKey]);
+
+export default jobs;
